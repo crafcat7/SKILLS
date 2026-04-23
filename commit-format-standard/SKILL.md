@@ -1,13 +1,17 @@
 ---
 name: commit-format-standard
-description: 规范 Git commit 信息的格式。当用户要求提交代码、创建 commit、撰写 commit message，或任何涉及版本控制提交操作的场景，都应使用此 skill。此 skill 确保 commit 信息包含清晰的类型作用域描述和详细的 Summary。
+description: Enforces a standardized Git commit message format. Use this skill whenever the user is about to commit code — including phrases like "commit this", "commit these files", "write the commit message", "generate a commit", "git commit", "make a commit", "help me commit", or any scenario involving version-control commit operations. This skill ensures every commit contains a clear type/scope/description first line plus a Summary and Changes list, so teammates and automation tooling (changelog generators, semantic-version inference, code review bots) can parse commit history reliably. Make sure to use this skill whenever the user is about to commit code, even if they do not explicitly ask for a specific format.
 ---
 
-# Commit 格式规范
+# Commit Format Standard
 
-每次 commit 信息必须严格遵循以下结构。
+Every commit message must follow the structure below. The reason for this structure is that teammates and automation tooling (changelog generators, semantic-version inference, code review bots, release automation) need a predictable shape to parse. A consistent format also makes it much faster for a human reviewer to scan history and understand intent.
 
-## 格式模板
+## Language
+
+Write the entire commit message in **English**, including the first line, Summary, and Changes items. Even if the user is conversing in another language, translate their change description into clear, natural English technical prose — do not transliterate.
+
+## Format template
 
 ```
 [<type>] <scope>: <description>
@@ -21,9 +25,9 @@ Changes:
   3. <change point 3>
 ```
 
-## 格式说明
+## Format specification
 
-### 第一行格式：`[<type>] <scope>: <description>`
+### First line: `[<type>] <scope>: <description>`
 
 | Component | Rule |
 |-----------|------|
@@ -34,15 +38,14 @@ Changes:
 ### Summary
 
 - Indent with 2 spaces
-- Use English
-- Explain: what, why, and impact
-- Usually 1-3 sentences
+- Explain the *what*, *why*, and *impact*
+- Typically 1-3 sentences
 
 ### Changes
 
-- Use numbered list (1. 2. 3.)
-- Each item should be a specific, independent change
-- Keep concise, one sentence per item
+- Use a numbered list (1. 2. 3.)
+- Each item is a specific, independent change
+- One sentence per item
 - Order by importance or logical sequence
 
 ## Examples
@@ -78,7 +81,7 @@ Changes:
 [perf] database: optimize user list query to reduce N+1 problem
 
 Summary:
-  Use eager loading to fetch related roles in single query instead of N+1. This reduces query count from 101 to 2 for 100 users.
+  Use eager loading to fetch related roles in a single query instead of N+1. This reduces query count from 101 to 2 for 100 users.
 
 Changes:
   1. Add eager loading for roles relationship
@@ -91,30 +94,33 @@ Changes:
 [refactor] api-client: refactor HTTP client to support interceptors
 
 Summary:
-  Extract HTTP logic into separate interceptor chain. This enables easy retry logic and request logging without duplicating code.
+  Extract HTTP logic into a separate interceptor chain. This enables retry logic and request logging without duplicating code.
 
 Changes:
   1. Create Interceptor interface with onRequest/onResponse methods
   2. Implement RetryInterceptor with exponential backoff
-  3. Move logging logic to LogInterceptor
+  3. Move logging logic into LogInterceptor
 ```
 
-## Common Types
+## Common types
 
 | Type | Description |
 |------|-------------|
-| feat | New feature |
-| fix | Bug fix |
+| feat | New feature (high frequency) |
+| fix | Bug fix (high frequency) |
+| refactor | Refactoring — no behavior change (high frequency) |
 | perf | Performance improvement |
-| refactor | Refactoring (non-functional change) |
 | test | Test related |
 | docs | Documentation |
-| chore | Build/tool/dependency update |
-| style | Code formatting (no functional change) |
+| chore | Build / tooling / dependency update |
+| style | Code formatting only (no functional change) |
 | ci | CI configuration |
+
+When in doubt between two types, prefer the one that better describes the *user-visible* effect (`feat` over `refactor` if behavior changes, `fix` over `refactor` if a bug is resolved).
 
 ## Notes
 
-- Keep the first line within one line, no line breaks
-- Use English for both description and Summary
-- Be specific, avoid vague words ("some changes", "fix things")
+- The first line must be a single line with no line breaks
+- Keep the entire message in English (see "Language" above)
+- Be specific — avoid vague wording such as "some changes" or "fix things"
+- If a commit genuinely spans multiple unrelated concerns (e.g. `feat` + `fix` for different modules), prefer splitting into separate commits rather than mixing types in one message
